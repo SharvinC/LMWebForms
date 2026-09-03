@@ -1,0 +1,1572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Landscope Digital Portal - Combined Prototype</title>
+  <style>
+    :root {
+      --brand: #b20e15;
+      --brand-dark: #7f090f;
+      --brand-soft: #fff2f1;
+      --brand-coral: #e2675f;
+      --ink: #172033;
+      --muted: #687386;
+      --line: #e4e8ef;
+      --surface: #ffffff;
+      --surface-2: #f7f8fb;
+      --surface-3: #fbfcfe;
+      --success: #1f8a4c;
+      --success-soft: #eaf7ef;
+      --warning: #9a5b00;
+      --warning-soft: #fff6df;
+      --info: #0a65c7;
+      --info-soft: #eef6ff;
+      --shadow: 0 10px 30px rgba(28, 39, 60, .08);
+      --shadow-sm: 0 4px 14px rgba(28, 39, 60, .07);
+      --radius: 16px;
+      --radius-sm: 11px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 100% 0%, rgba(226,103,95,.10), transparent 28%),
+        linear-gradient(#fbfcff, #f5f7fb 42%, #ffffff);
+      min-height: 100vh;
+    }
+
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    a { color: inherit; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: rgba(255,255,255,.93);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(228,232,239,.95);
+    }
+
+    .topbar-inner {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 14px 28px;
+      display: flex;
+      gap: 18px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand-wrap { display: flex; align-items: center; gap: 12px; }
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--brand), #d13b36);
+      color: white;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      letter-spacing: -.03em;
+      box-shadow: 0 8px 20px rgba(178,14,21,.2);
+    }
+    .brand-copy strong { display: block; font-size: 15px; }
+    .brand-copy span { color: var(--muted); font-size: 12px; }
+
+    .portal-pill {
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      background: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .02em;
+    }
+
+    .container {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 34px 28px 80px;
+    }
+
+    .hero {
+      background: linear-gradient(120deg, #fff 0%, #fff 58%, #fff4f3 100%);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow-sm);
+      border-radius: 22px;
+      padding: 26px 28px;
+      margin-bottom: 22px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 210px;
+      height: 210px;
+      right: -80px;
+      top: -100px;
+      border-radius: 50%;
+      background: rgba(178,14,21,.08);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      color: var(--brand);
+      font-weight: 800;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-bottom: 8px;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(27px, 3vw, 42px);
+      line-height: 1.08;
+      letter-spacing: -.035em;
+      max-width: 850px;
+    }
+
+    .hero p {
+      margin: 13px 0 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.7;
+      max-width: 850px;
+    }
+
+    .tab-shell {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      border-radius: 18px;
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+
+    .record-tabs {
+      display: flex;
+      gap: 4px;
+      padding: 0 22px;
+      border-bottom: 1px solid var(--line);
+      background: var(--surface-3);
+    }
+
+    .tab-btn {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      padding: 17px 18px 15px;
+      color: #536078;
+      font-weight: 700;
+      border-bottom: 3px solid transparent;
+      transition: .2s ease;
+    }
+
+    .tab-btn:hover { color: var(--brand); background: #fff8f7; }
+    .tab-btn.active { color: var(--brand); border-bottom-color: var(--brand); background: #fff; }
+
+    .tab-panel { display: none; padding: 22px; }
+    .tab-panel.active { display: block; }
+
+    .section-heading {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .section-heading h2 { margin: 0; font-size: 20px; letter-spacing: -.02em; }
+    .section-heading p { margin: 5px 0 0; color: var(--muted); font-size: 13px; }
+    .count-pill {
+      font-size: 12px;
+      font-weight: 800;
+      border: 1px solid #f0cccc;
+      color: var(--brand);
+      background: var(--brand-soft);
+      border-radius: 999px;
+      padding: 6px 10px;
+      white-space: nowrap;
+    }
+
+    .accordion { display: grid; gap: 12px; }
+    .accordion-item {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fff;
+      overflow: hidden;
+      transition: .2s ease;
+    }
+    .accordion-item.open { border-color: #e9c1bf; box-shadow: 0 8px 20px rgba(178,14,21,.06); }
+
+    .accordion-trigger {
+      width: 100%;
+      border: 0;
+      background: white;
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 14px;
+      align-items: center;
+      text-align: left;
+      padding: 17px 18px;
+      color: var(--ink);
+    }
+    .accordion-trigger:hover { background: #fffafa; }
+
+    .acc-title { font-weight: 800; line-height: 1.35; }
+    .acc-sub { color: var(--muted); font-size: 12px; margin-top: 4px; }
+    .chevron { width: 25px; height: 25px; border-radius: 50%; border: 1px solid var(--line); display: grid; place-items: center; transition: transform .2s; }
+    .accordion-item.open .chevron { transform: rotate(180deg); }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 6px 9px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+    .badge.updated { color: var(--success); background: var(--success-soft); border: 1px solid #c9ead7; }
+    .badge.updated::before { content:""; width: 6px; height: 6px; border-radius: 50%; background: var(--success); }
+
+    .accordion-body {
+      display: none;
+      border-top: 1px solid var(--line);
+      padding: 18px;
+      background: #fff;
+    }
+    .accordion-item.open .accordion-body { display: block; }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .meta-card { background: var(--surface-2); border: 1px solid var(--line); border-radius: 11px; padding: 12px 13px; }
+    .meta-label { color: var(--muted); font-size: 11px; text-transform: uppercase; font-weight: 800; letter-spacing: .05em; }
+    .meta-value { margin-top: 5px; font-weight: 700; font-size: 14px; }
+
+    .description { color: #4f5b70; line-height: 1.65; font-size: 14px; margin-bottom: 14px; }
+    .update-note {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      border-radius: 11px;
+      padding: 11px 12px;
+      border: 1px solid #cfe7d8;
+      background: #f1faf4;
+      color: #2f6b48;
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+
+    .btn-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    .btn {
+      border: 1px solid transparent;
+      border-radius: 10px;
+      padding: 10px 15px;
+      font-weight: 800;
+      font-size: 13px;
+      transition: transform .12s ease, box-shadow .12s ease, background .12s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn-primary { background: var(--brand); color: #fff; box-shadow: 0 8px 17px rgba(178,14,21,.16); }
+    .btn-primary:hover { background: var(--brand-dark); }
+    .btn-secondary { background: #fff; color: #344055; border-color: #cfd6e1; }
+    .btn-secondary:hover { background: #f7f8fb; }
+    .btn-ghost { background: transparent; color: var(--brand); border-color: #ebc7c5; }
+    .btn-small { padding: 8px 11px; font-size: 12px; }
+
+    .supplier-card {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 22px;
+      background: linear-gradient(135deg, #fff, #fff9f8);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 22px;
+      align-items: center;
+    }
+    .supplier-card h3 { margin: 0; font-size: 19px; color: var(--brand-coral); font-weight: 650; }
+    .supplier-card p { margin: 10px 0 0; color: var(--muted); line-height: 1.6; font-size: 14px; }
+
+    .notes {
+      margin-top: 20px;
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 16px;
+      padding: 20px 22px;
+      box-shadow: var(--shadow-sm);
+    }
+    .notes h3 { margin: 0 0 10px; font-size: 16px; color: var(--brand-coral); }
+    .notes ol { margin: 0; padding-left: 21px; color: #4e596c; line-height: 1.72; font-size: 13px; }
+    .notes li + li { margin-top: 6px; }
+
+    .view { display: none; }
+    .view.active { display: block; animation: fade .18s ease; }
+    @keyframes fade { from{opacity:.3; transform: translateY(4px)} to{opacity:1; transform:none} }
+
+    .form-page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 18px;
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 17px;
+      padding: 20px 22px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 18px;
+    }
+    .form-page-header h2 { margin: 0; font-size: 23px; letter-spacing: -.025em; color: var(--brand-coral); }
+    .form-page-header .ref { margin-top: 7px; font-weight: 700; font-size: 13px; }
+
+    .intro-banner {
+      margin: 0 0 18px;
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 14px;
+      padding: 15px 17px;
+      color: #536078;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .form-card {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: var(--shadow-sm);
+      padding: 22px;
+    }
+    .form-card h3 { margin: 0 0 6px; font-size: 18px; }
+    .form-card > .help { margin: 0 0 18px; color: var(--muted); font-size: 13px; }
+
+    .grid-2, .grid-3, .grid-4 { display: grid; gap: 15px; }
+    .grid-2 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
+    .grid-4 { grid-template-columns: repeat(4, minmax(0,1fr)); }
+    .full { grid-column: 1 / -1; }
+
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label { font-size: 12px; font-weight: 800; color: #3a455a; }
+    .field label .required { color: var(--brand); margin-right: 3px; }
+    .field small { color: var(--muted); font-size: 11px; }
+    .field input, .field select, .field textarea {
+      width: 100%;
+      border: 1px solid #ccd3df;
+      border-radius: 9px;
+      padding: 10px 11px;
+      min-height: 40px;
+      outline: 0;
+      color: var(--ink);
+      background: #fff;
+      transition: box-shadow .15s, border-color .15s;
+    }
+    .field textarea { min-height: 94px; resize: vertical; }
+    .field input:focus, .field select:focus, .field textarea:focus {
+      border-color: #5a91d8;
+      box-shadow: 0 0 0 3px rgba(56,128,219,.12);
+    }
+
+    .form-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-top: 20px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+    }
+
+    .supplier-form-shell {
+      display: grid;
+      grid-template-columns: 250px minmax(0,1fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .stepper-card {
+      position: sticky;
+      top: 84px;
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 17px;
+      box-shadow: var(--shadow-sm);
+      padding: 16px;
+    }
+    .stepper-label { font-size: 11px; text-transform: uppercase; font-weight: 900; letter-spacing: .06em; color: var(--muted); margin: 2px 5px 13px; }
+    .steps { display: grid; gap: 3px; }
+    .step {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      border-radius: 11px;
+      display: grid;
+      grid-template-columns: 32px 1fr;
+      align-items: center;
+      gap: 10px;
+      padding: 9px;
+      text-align: left;
+      color: #5b6679;
+      position: relative;
+    }
+    .step:hover { background: #f8f9fc; }
+    .step.active { background: var(--brand-soft); color: var(--brand); }
+    .step.done { color: #246840; }
+    .step-dot {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1px solid #d7dce5;
+      display: grid;
+      place-items: center;
+      font-size: 11px;
+      font-weight: 900;
+      background: #fff;
+    }
+    .step.active .step-dot { background: var(--brand); color: #fff; border-color: var(--brand); }
+    .step.done .step-dot { background: var(--success-soft); color: var(--success); border-color: #c6e8d4; }
+    .step-text strong { display: block; font-size: 12px; line-height: 1.3; }
+    .step-text span { display: block; font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+    .progress-track { height: 6px; border-radius: 999px; background: #edf0f5; margin: 13px 5px 4px; overflow: hidden; }
+    .progress-fill { height: 100%; width: 16.6%; background: linear-gradient(90deg, var(--brand), var(--brand-coral)); border-radius: inherit; transition: width .25s ease; }
+
+    .step-panel { display: none; }
+    .step-panel.active { display: block; animation: fade .18s ease; }
+
+    .subsection {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: var(--surface-3);
+      margin-top: 15px;
+    }
+    .subsection h4 { margin: 0 0 13px; font-size: 14px; }
+
+    .table-wrap { border: 1px solid var(--line); border-radius: 12px; overflow-x: auto; margin-top: 15px; }
+    table { border-collapse: collapse; width: 100%; min-width: 680px; }
+    th, td { padding: 11px 12px; border-bottom: 1px solid var(--line); text-align: left; font-size: 12px; }
+    th { background: #f5f7fb; color: #5d687b; text-transform: uppercase; letter-spacing: .04em; font-size: 10px; }
+    tr:last-child td { border-bottom: 0; }
+    .empty-row { text-align: center; color: var(--muted); padding: 20px; }
+
+    .category-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; }
+    .check-card {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      padding: 12px;
+      background: #fff;
+    }
+    .check-card:hover { border-color: #e7bdbb; background: #fffafa; }
+    .check-card input { margin-top: 3px; accent-color: var(--brand); }
+    .check-card strong { display: block; font-size: 12px; }
+    .check-card span { display: block; font-size: 11px; color: var(--muted); margin-top: 3px; line-height: 1.4; }
+
+    .selected-tags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 13px; }
+    .tag { padding: 6px 9px; background: var(--brand-soft); border: 1px solid #f0cecc; color: var(--brand); border-radius: 999px; font-size: 11px; font-weight: 800; }
+
+    .notice-box {
+      border: 1px solid #e8dcc0;
+      background: #fffaf0;
+      color: #715a27;
+      border-radius: 12px;
+      padding: 14px;
+      font-size: 12px;
+      line-height: 1.6;
+      margin-bottom: 15px;
+    }
+
+    .upload-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
+    .upload-box {
+      border: 1.5px dashed #c6ccd8;
+      border-radius: 13px;
+      background: #fbfcff;
+      padding: 18px;
+      text-align: center;
+      min-height: 135px;
+      display: grid;
+      place-items: center;
+      transition: border-color .16s, background .16s;
+      position: relative;
+    }
+    .upload-box:hover, .upload-box.drag { border-color: var(--brand-coral); background: #fff8f7; }
+    .upload-icon { font-size: 26px; line-height: 1; }
+    .upload-title { font-weight: 800; font-size: 12px; margin-top: 8px; }
+    .upload-hint { color: var(--muted); font-size: 11px; margin-top: 4px; }
+    .file-name { color: var(--success); font-size: 11px; font-weight: 800; margin-top: 8px; word-break: break-word; }
+    .upload-box input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+
+    .review-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
+    .review-block { border: 1px solid var(--line); border-radius: 12px; padding: 14px; background: #fbfcfe; }
+    .review-block h4 { margin: 0 0 10px; font-size: 13px; }
+    .review-list { display: grid; gap: 7px; font-size: 12px; }
+    .review-item { display: grid; grid-template-columns: 130px 1fr; gap: 9px; }
+    .review-item span:first-child { color: var(--muted); }
+
+    .toast {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      z-index: 100;
+      background: #172033;
+      color: #fff;
+      border-radius: 12px;
+      padding: 13px 16px;
+      box-shadow: var(--shadow);
+      transform: translateY(24px);
+      opacity: 0;
+      pointer-events: none;
+      transition: .22s ease;
+      max-width: 360px;
+      font-size: 13px;
+    }
+    .toast.show { transform: none; opacity: 1; }
+
+    .prototype-banner {
+      margin-top: 18px;
+      text-align: center;
+      color: #7a8496;
+      font-size: 11px;
+    }
+
+    @media (max-width: 900px) {
+      .supplier-form-shell { grid-template-columns: 1fr; }
+      .stepper-card { position: static; }
+      .steps { grid-template-columns: repeat(3, minmax(0,1fr)); }
+      .step { grid-template-columns: 28px 1fr; }
+      .step-text span { display: none; }
+      .grid-3, .grid-4 { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .upload-grid, .review-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      .topbar-inner, .container { padding-left: 16px; padding-right: 16px; }
+      .portal-pill { display: none; }
+      .hero { padding: 22px 19px; }
+      .record-tabs { padding: 0 8px; }
+      .tab-btn { flex: 1; padding-left: 8px; padding-right: 8px; }
+      .tab-panel { padding: 14px; }
+      .accordion-trigger { grid-template-columns: 1fr auto; }
+      .accordion-trigger .badge { grid-column: 1 / 2; width: fit-content; }
+      .chevron { grid-column: 2 / 3; grid-row: 1 / 3; }
+      .meta-grid, .grid-2, .grid-3, .grid-4, .category-grid { grid-template-columns: 1fr; }
+      .supplier-card { grid-template-columns: 1fr; }
+      .form-page-header { flex-direction: column; }
+      .form-page-header .btn { width: 100%; }
+      .steps { grid-template-columns: 1fr 1fr; }
+      .step-text strong { font-size: 11px; }
+      .form-footer { align-items: stretch; flex-direction: column-reverse; }
+      .form-footer .right-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+      .form-footer .btn { width: 100%; }
+    }
+  
+
+    /* Combined portal additions */
+    .topbar-actions { display: flex; gap: 10px; align-items: center; }
+    .top-home-btn {
+      border: 1px solid var(--line); background: #fff; color: var(--ink);
+      border-radius: 10px; padding: 9px 12px; font-weight: 750; font-size: 12px;
+      transition: .18s ease;
+    }
+    .top-home-btn:hover { border-color: #e3b8b6; color: var(--brand); background: #fff8f7; }
+    .brand-wrap { cursor: pointer; }
+
+    .home-hero {
+      min-height: 300px;
+      display: grid;
+      grid-template-columns: 1.25fr .75fr;
+      align-items: center;
+      gap: 28px;
+      background:
+        radial-gradient(circle at 92% 18%, rgba(178,14,21,.14), transparent 25%),
+        linear-gradient(120deg,#ffffff 0%,#fff 54%,#fff4f3 100%);
+    }
+    .home-hero .hero-art {
+      min-height: 210px;
+      border-radius: 18px;
+      border: 1px solid #f0d8d6;
+      background:
+        linear-gradient(150deg, rgba(178,14,21,.08), rgba(255,255,255,.5)),
+        repeating-linear-gradient(45deg, transparent 0 18px, rgba(178,14,21,.03) 18px 36px);
+      display: grid;
+      place-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .home-hero .hero-art::before,
+    .home-hero .hero-art::after {
+      content: ""; position: absolute; border-radius: 50%; border: 1px solid rgba(178,14,21,.16);
+    }
+    .home-hero .hero-art::before { width: 180px; height: 180px; }
+    .home-hero .hero-art::after { width: 120px; height: 120px; }
+    .home-hero .hero-art span { font-size: 58px; z-index: 1; filter: grayscale(1); opacity: .85; }
+
+    .portal-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 18px; margin-top: 22px; }
+    .portal-card {
+      border: 1px solid var(--line); border-radius: 20px; background: #fff; padding: 24px;
+      box-shadow: var(--shadow-sm); position: relative; overflow: hidden; transition: .2s ease;
+    }
+    .portal-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: #ebc6c4; }
+    .portal-card::after {
+      content: ""; position: absolute; width: 130px; height: 130px; right: -58px; bottom: -60px;
+      border-radius: 50%; background: rgba(178,14,21,.05);
+    }
+    .portal-icon {
+      width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center;
+      background: var(--brand-soft); color: var(--brand); font-size: 25px; margin-bottom: 16px;
+      border: 1px solid #f2cfcd;
+    }
+    .portal-card h2 { margin: 0; font-size: 23px; letter-spacing: -.025em; }
+    .portal-card p { margin: 9px 0 20px; color: var(--muted); line-height: 1.6; font-size: 14px; max-width: 520px; }
+    .portal-card .btn { position: relative; z-index: 1; }
+
+    .breadcrumb-row { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; color: var(--muted); font-size: 12px; font-weight: 700; }
+    .breadcrumb-row button { border: 0; background: transparent; color: var(--brand); padding: 0; font-weight: 800; }
+
+    .career-card {
+      display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 18px;
+      border: 1px solid var(--line); border-radius: 14px; padding: 20px; background: linear-gradient(135deg,#fff,#fffafa);
+    }
+    .career-card h3 { margin: 0; color: var(--brand-coral); font-size: 19px; }
+    .career-card p { margin: 8px 0 0; color: var(--muted); line-height: 1.55; font-size: 14px; }
+
+    .job-badge {
+      display: inline-flex; align-items: center; gap: 6px; border: 1px solid #d8e5f7; background: #f4f8ff;
+      color: #2d5f9a; border-radius: 999px; padding: 6px 9px; font-size: 11px; font-weight: 800;
+    }
+    .job-detail-note {
+      margin-top: 14px; padding: 12px 14px; border-radius: 11px; background: #f8fafc; border: 1px solid var(--line);
+      font-size: 13px; color: var(--muted); line-height: 1.6;
+    }
+
+    .career-form-shell {
+      display: grid; grid-template-columns: 270px minmax(0,1fr); gap: 18px; align-items: start;
+    }
+    .application-summary {
+      display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 10px; margin-bottom: 16px;
+    }
+    .summary-cell { border: 1px solid var(--line); background: #fafbfd; padding: 12px 13px; border-radius: 11px; }
+    .summary-cell span { display: block; color: var(--muted); font-size: 10px; text-transform: uppercase; font-weight: 800; letter-spacing: .06em; }
+    .summary-cell strong { display: block; margin-top: 4px; font-size: 13px; }
+
+    .inline-add-card { border: 1px solid var(--line); background: #fbfcfe; border-radius: 12px; padding: 14px; margin-bottom: 14px; }
+    .inline-add-card h4 { margin: 0 0 11px; font-size: 13px; }
+    .small-note { color: var(--muted); font-size: 11px; line-height: 1.5; }
+    .signature-box { border: 1px dashed #d9b8b6; background: #fff9f8; border-radius: 12px; padding: 16px; }
+    .declaration-text { margin: 0 0 14px; line-height: 1.65; color: #4c576b; font-size: 13px; }
+    .check-row { display: flex; gap: 10px; align-items: flex-start; margin-top: 12px; }
+    .check-row input { margin-top: 3px; }
+    .check-row label { line-height: 1.5; font-size: 13px; }
+    .open-app-note { padding: 12px 14px; background: var(--info-soft); border: 1px solid #cfe3fa; color: #174f89; border-radius: 11px; font-size: 12px; line-height: 1.55; margin-bottom: 15px; }
+
+    @media (max-width: 900px) {
+      .home-hero { grid-template-columns: 1fr; }
+      .home-hero .hero-art { min-height: 150px; }
+      .portal-grid { grid-template-columns: 1fr; }
+      .career-form-shell { grid-template-columns: 1fr; }
+      .application-summary { grid-template-columns: 1fr; }
+      .career-card { grid-template-columns: 1fr; }
+    }
+</style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand-wrap" id="brandHome" title="Go to home">
+        <div class="brand-mark">L</div>
+        <div class="brand-copy">
+          <strong>Landscope Digital Portal</strong>
+          <span>Procurement & Career Services</span>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button class="top-home-btn" id="topHomeBtn">Home</button>
+        <div class="portal-pill">Salesforce Experience Site · UI Prototype</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <section class="view active" id="portalHomeView">
+      <div class="hero home-hero">
+        <div>
+          <div class="eyebrow">Landscope digital services</div>
+          <h1>One entry point for procurement and career services.</h1>
+          <p>Select the area you want to access. Each portal keeps its own registration journey while using a consistent Salesforce Experience Site design.</p>
+        </div>
+        <div class="hero-art" aria-hidden="true"><span>⌂</span></div>
+      </div>
+
+      <div class="portal-grid">
+        <article class="portal-card">
+          <div class="portal-icon">▦</div>
+          <h2>Procurement</h2>
+          <p>View open tenders, review procurement updates, register for an opportunity, or register your organisation as a supplier.</p>
+          <button class="btn btn-primary" id="openProcurementPortal">Open Procurement</button>
+        </article>
+        <article class="portal-card">
+          <div class="portal-icon">♟</div>
+          <h2>Career</h2>
+          <p>Browse current job openings and apply for a specific role, or submit an open application for future opportunities.</p>
+          <button class="btn btn-primary" id="openCareerPortal">Open Career</button>
+        </article>
+      </div>
+
+      <div class="prototype-banner">Combined UI prototype — no information is sent to Salesforce or any external system.</div>
+    </section>
+
+
+    <!-- LIST / LANDING VIEW -->
+    <section class="view" id="procurementListingView">
+      <div class="breadcrumb-row"><button type="button" data-go-home>Home</button><span>›</span><span>Procurement</span></div>
+      <div class="hero">
+        <div class="eyebrow">Procurement opportunities</div>
+        <h1>Register for tenders or join the supplier network.</h1>
+        <p>Browse current procurement opportunities, review updates and closing dates, or complete the supplier registration process using the guided form.</p>
+      </div>
+
+      <div class="tab-shell">
+        <div class="record-tabs" role="tablist" aria-label="Procurement tabs">
+          <button class="tab-btn active" data-tab-group="procurement" data-tab="tenderTab" role="tab" aria-selected="true">Tender Registration</button>
+          <button class="tab-btn" data-tab-group="procurement" data-tab="supplierTab" role="tab" aria-selected="false">Supplier Registration</button>
+        </div>
+
+        <div class="tab-panel active" id="tenderTab" data-tab-panel-group="procurement" role="tabpanel">
+          <div class="section-heading">
+            <div>
+              <h2>Open Tenders</h2>
+              <p>Select a tender to view the full details and registration action.</p>
+            </div>
+            <span class="count-pill" id="tenderCount">2 opportunities</span>
+          </div>
+          <div class="accordion" id="tenderAccordion"></div>
+        </div>
+
+        <div class="tab-panel" id="supplierTab" data-tab-panel-group="procurement" role="tabpanel">
+          <div class="section-heading">
+            <div>
+              <h2>Supplier Registration</h2>
+              <p>Register your organisation as a potential supplier, service provider or contractor.</p>
+            </div>
+          </div>
+
+          <div class="supplier-card">
+            <div>
+              <h3>REGISTRATION OF POTENTIAL SUPPLIERS, SERVICE PROVIDERS AND CONTRACTORS</h3>
+              <p>We invite all suppliers, service providers, and contractors to register with us.</p>
+            </div>
+            <button class="btn btn-primary" id="openSupplierRegistration">Register for RFP</button>
+          </div>
+        </div>
+      </div>
+
+      <section class="notes">
+        <h3>Please note:</h3>
+        <ol>
+          <li>All applicants should register online and upload the required documents as outlined in the registration form.</li>
+          <li>Registration does not guarantee any contractual obligation or exclusive partnership with Landscope.</li>
+          <li>Landscope (Mauritius) Ltd reserves the right to accept, reject, or cancel the registration process at any time before selection, without liability or obligation to explain.</li>
+        </ol>
+      </section>
+
+      <div class="prototype-banner">Prototype only — no information is sent to Salesforce or any external system.</div>
+    </section>
+
+    <!-- TENDER REGISTRATION VIEW -->
+    <section class="view" id="tenderFormView">
+      <div class="form-page-header">
+        <div>
+          <div class="eyebrow">Tender registration</div>
+          <h2 id="tenderFormTitle">Cleaning Services</h2>
+          <div class="ref" id="tenderFormRef">Reference: LM-RFP-S25</div>
+        </div>
+        <button class="btn btn-secondary" data-back-procurement>← Back to opportunities</button>
+      </div>
+
+      <div class="intro-banner" id="tenderFormIntro">We invite all suppliers, service providers, and contractors to register with us.</div>
+
+      <form class="form-card" id="tenderRegistrationForm">
+        <h3>Contact & Company Details</h3>
+        <p class="help">Complete the details below to register your interest in this tender.</p>
+
+        <div class="grid-2">
+          <div class="field full">
+            <label><span class="required">*</span>Company Name</label>
+            <input name="companyName" required placeholder="Enter registered company name" />
+          </div>
+
+          <div class="field">
+            <label><span class="required">*</span>Salutation</label>
+            <select name="salutation" required>
+              <option value="">Select Salutation</option>
+              <option>Mr</option><option>Mrs</option><option>Ms</option><option>Dr</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Title</label>
+            <input name="title" placeholder="e.g. Procurement Manager" />
+          </div>
+          <div class="field">
+            <label><span class="required">*</span>First Name</label>
+            <input name="firstName" required />
+          </div>
+          <div class="field">
+            <label><span class="required">*</span>Last Name</label>
+            <input name="lastName" required />
+          </div>
+          <div class="field full">
+            <label><span class="required">*</span>Email</label>
+            <input type="email" name="email" required placeholder="name@company.com" />
+          </div>
+          <div class="field full">
+            <label><span class="required">*</span>Phone</label>
+            <input type="tel" name="phone" required placeholder="+230 ..." />
+          </div>
+        </div>
+
+        <div class="form-footer">
+          <span style="font-size:11px;color:var(--muted)">* Required fields</span>
+          <div class="btn-row">
+            <button type="button" class="btn btn-secondary" data-back-procurement>Cancel</button>
+            <button type="submit" class="btn btn-primary">Submit Registration</button>
+          </div>
+        </div>
+      </form>
+    </section>
+
+    <!-- SUPPLIER REGISTRATION VIEW -->
+    <section class="view" id="supplierFormView">
+      <div class="form-page-header">
+        <div>
+          <div class="eyebrow">Supplier registration</div>
+          <h2>Procurement Registration</h2>
+          <div class="ref">Potential Suppliers, Service Providers and Contractors</div>
+        </div>
+        <button class="btn btn-secondary" data-back-procurement>← Back to opportunities</button>
+      </div>
+
+      <div class="intro-banner">
+        We invite all suppliers, service providers, and contractors to register with us. Upon submission of the form, you will receive an email with the download link to the tender document. Please ensure you insert the correct email address.
+      </div>
+
+      <div class="supplier-form-shell">
+        <aside class="stepper-card" aria-label="Registration sections">
+          <div class="stepper-label">Registration Path</div>
+          <div class="steps" id="supplierSteps"></div>
+          <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+        </aside>
+
+        <form class="form-card" id="supplierRegistrationForm">
+          <!-- STEP 1 -->
+          <section class="step-panel active" data-step-panel="0">
+            <h3>Company Details</h3>
+            <p class="help">Tell us about the legal entity being registered.</p>
+            <div class="grid-2">
+              <div class="field full"><label><span class="required">*</span>Name of Business</label><input name="businessName" required /></div>
+              <div class="field"><label><span class="required">*</span>Business Structure</label><select name="businessStructure" required><option value="">Select Business Structure</option><option>Private Company</option><option>Public Company</option><option>Sole Trader</option><option>Partnership</option><option>Other</option></select></div>
+              <div class="field"><label><span class="required">*</span>Date of Registration</label><input type="date" name="registrationDate" required /></div>
+              <div class="field full"><label><span class="required">*</span>Registered Address Street</label><input name="addressStreet" required /></div>
+              <div class="field"><label><span class="required">*</span>Registered Address City</label><input name="addressCity" required /></div>
+              <div class="field"><label>Registered Address State</label><input name="addressState" /></div>
+              <div class="field"><label>Registered Address Postal Code</label><input name="addressPostal" /></div>
+              <div class="field"><label><span class="required">*</span>Registered Address Country</label><input name="addressCountry" required value="Mauritius" /></div>
+              <div class="field"><label><span class="required">*</span>BRN</label><input name="brn" required /></div>
+              <div class="field"><label><span class="required">*</span>VAT/TAN</label><input name="vatTan" required /></div>
+              <div class="field"><label><span class="required">*</span>Certificate of Incorporation Number</label><input name="incorporationNo" required /></div>
+              <div class="field"><label>CIDB Registration Number</label><input name="cidb" /></div>
+              <div class="field full"><label>Other Licenses</label><textarea name="licenses" placeholder="List any relevant professional or operating licences"></textarea></div>
+              <div class="field"><label><span class="required">*</span>Company Telephone</label><input name="companyPhone" required /></div>
+              <div class="field"><label>Company Fax</label><input name="companyFax" /></div>
+              <div class="field"><label><span class="required">*</span>Email of Company</label><input type="email" name="companyEmail" required /></div>
+              <div class="field"><label>Company Website</label><input name="website" placeholder="https://" /></div>
+            </div>
+          </section>
+
+          <!-- STEP 2 -->
+          <section class="step-panel" data-step-panel="1">
+            <h3>Company Profile</h3>
+            <p class="help">Add one or more company contacts. The primary contact should be the main person for procurement communication.</p>
+            <div class="subsection">
+              <h4>Add New Profile</h4>
+              <div class="grid-4">
+                <div class="field"><label>Name</label><input id="profileName" /></div>
+                <div class="field"><label>Title</label><input id="profileTitle" /></div>
+                <div class="field"><label>Email</label><input id="profileEmail" type="email" /></div>
+                <div class="field"><label>Profile Type</label><select id="profileType"><option>Primary Contact</option><option>Finance Contact</option><option>Technical Contact</option><option>Director</option></select></div>
+              </div>
+              <div class="btn-row" style="margin-top:12px"><button type="button" class="btn btn-ghost btn-small" id="addProfileBtn">+ Add Profile</button></div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Name</th><th>Title</th><th>Email</th><th>Profile Type</th><th>Primary Contact</th><th>Actions</th></tr></thead>
+                <tbody id="profileTableBody"><tr id="profileEmpty"><td colspan="6" class="empty-row">No company profile added.</td></tr></tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- STEP 3 -->
+          <section class="step-panel" data-step-panel="2">
+            <h3>Company Other Details</h3>
+            <p class="help">Provide additional business information for supplier assessment.</p>
+            <div class="grid-2">
+              <div class="field"><label><span class="required">*</span>Turnover for last three (3) years (MUR)</label><input type="number" min="0" name="turnover" required placeholder="0" /></div>
+              <div class="field"><label>No. of Full-Time Employees</label><input type="number" min="0" name="employees" /></div>
+              <div class="field"><label><span class="required">*</span>Previous trading with Landscope (Mauritius) Ltd during the last 3 years</label><select name="previousTrading" required><option value="">Select an Option</option><option>Yes</option><option>No</option></select></div>
+              <div class="field"><label><span class="required">*</span>Credit Facility for a Minimum of 30 Days</label><select name="creditFacility" required><option value="">Select Credit Facility</option><option>Yes</option><option>No</option><option>Subject to approval</option></select></div>
+              <div class="field"><label><span class="required">*</span>Type of Business</label><select name="businessType" required><option value="">Select Type of Business</option><option>Goods</option><option>Works</option><option>Services</option><option>Consultancy</option><option>Mixed</option></select></div>
+              <div class="field"><label><span class="required">*</span>Has your company ever been suspended from any Government Procurement Activities?</label><select name="suspended" required><option value="">Select an Option</option><option>No</option><option>Yes</option></select></div>
+            </div>
+          </section>
+
+          <!-- STEP 4 -->
+          <section class="step-panel" data-step-panel="3">
+            <h3>Supplier Categories</h3>
+            <p class="help">Select at least one Supplier Category to display the available items.</p>
+            <div class="category-grid" id="categoryGrid">
+              <label class="check-card"><input type="checkbox" name="category" value="A" /><span><strong>(A) Supply of Building and Civil Engineering goods / materials</strong><span>Materials, fixtures and construction-related goods.</span></span></label>
+              <label class="check-card"><input type="checkbox" name="category" value="B" /><span><strong>(B) Building and Civil Engineering works</strong><span>Construction, repair and civil engineering works.</span></span></label>
+              <label class="check-card"><input type="checkbox" name="category" value="C" /><span><strong>(C) Supply of Mechanical and Electrical goods / materials</strong><span>Mechanical, electrical and MEP-related goods.</span></span></label>
+              <label class="check-card"><input type="checkbox" name="category" value="D" /><span><strong>(D) Mechanical and Electrical works</strong><span>Installation, maintenance and technical works.</span></span></label>
+              <label class="check-card"><input type="checkbox" name="category" value="E" /><span><strong>(E) Marketing and Public Relation</strong><span>Branding, media, advertising and communications.</span></span></label>
+              <label class="check-card"><input type="checkbox" name="category" value="F" /><span><strong>(F) Consultancy services</strong><span>Professional advisory and consulting services.</span></span></label>
+              <label class="check-card"><input type="checkbox" name="category" value="G" /><span><strong>(G) IT - goods and services</strong><span>Software, hardware, implementation and support.</span></span></label>
+              <label class="check-card"><input type="checkbox" name="category" value="H" /><span><strong>(H) Miscellaneous works and services</strong><span>Other eligible works and services.</span></span></label>
+            </div>
+            <div class="selected-tags" id="selectedCategoryTags"><span style="font-size:11px;color:var(--muted)">No category selected yet.</span></div>
+          </section>
+
+          <!-- STEP 5 -->
+          <section class="step-panel" data-step-panel="4">
+            <h3>Disclaimer & Documents</h3>
+            <p class="help">Upload the supporting documents required to complete the supplier registration.</p>
+            <div class="notice-box"><strong>Applicants are invited to take note of the following:</strong><br />This exercise does not mean that Landscope (Mauritius) Ltd has any obligation towards suppliers and does not entitle the latter to become exclusive providers of goods/services/works. Landscope (Mauritius) Ltd reserves the right to look for alternative suppliers should it be deemed necessary.</div>
+            <div class="subsection" style="margin-bottom:14px">
+              <h4>Declaration Form</h4>
+              <div style="font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:10px">Download the declaration form, fill it in and upload it below.</div>
+              <button type="button" class="btn btn-secondary btn-small" id="downloadDeclaration">↓ Download Declaration Form (prototype)</button>
+            </div>
+
+            <div class="upload-grid">
+              <div class="upload-box" data-upload="Filled Declaration Form"><div><div class="upload-icon">☁</div><div class="upload-title">Filled Declaration Form *</div><div class="upload-hint">Drag & drop or click to browse</div><div class="file-name"></div></div><input type="file" /></div>
+              <div class="upload-box" data-upload="Resolution Authorizing Individual"><div><div class="upload-icon">☁</div><div class="upload-title">Resolution Authorizing Individual to Transact on Behalf of Company *</div><div class="upload-hint">Drag & drop or click to browse</div><div class="file-name"></div></div><input type="file" /></div>
+              <div class="upload-box" data-upload="Proof of ID"><div><div class="upload-icon">☁</div><div class="upload-title">Proof of ID — NIC (Recto/Verso) or Passport *</div><div class="upload-hint">Drag & drop or click to browse</div><div class="file-name"></div></div><input type="file" /></div>
+              <div class="upload-box" data-upload="Residential Address"><div><div class="upload-icon">☁</div><div class="upload-title">Copy of Residential Address — Utility Bill ≤ 3 Months *</div><div class="upload-hint">Drag & drop or click to browse</div><div class="file-name"></div></div><input type="file" /></div>
+            </div>
+          </section>
+
+          <!-- STEP 6 -->
+          <section class="step-panel" data-step-panel="5">
+            <h3>Review & Submit</h3>
+            <p class="help">Review the information below before submitting the registration.</p>
+            <div class="review-grid" id="reviewGrid"></div>
+            <div class="notice-box" style="margin-top:15px;background:var(--info-soft);border-color:#cfe3fb;color:#315d8d">Prototype behaviour: submission displays a confirmation message only. No record will be created.</div>
+          </section>
+
+          <div class="form-footer">
+            <button type="button" class="btn btn-secondary" data-back-procurement>Cancel Registration</button>
+            <div class="right-actions btn-row">
+              <button type="button" class="btn btn-secondary" id="prevStepBtn">Previous</button>
+              <button type="button" class="btn btn-primary" id="nextStepBtn">Next</button>
+              <button type="submit" class="btn btn-primary" id="supplierSubmitBtn" style="display:none">Submit Registration</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </section>
+  
+
+    <!-- CAREER LISTING VIEW -->
+    <section class="view" id="careerListingView">
+      <div class="breadcrumb-row"><button type="button" data-go-home>Home</button><span>›</span><span>Career</span></div>
+      <div class="hero">
+        <div class="eyebrow">Career opportunities</div>
+        <h1>Explore opportunities and apply online.</h1>
+        <p>Review current openings and complete a guided application, or submit an open application when there is no specific position you want to apply for.</p>
+      </div>
+
+      <div class="tab-shell">
+        <div class="record-tabs" role="tablist" aria-label="Career tabs">
+          <button class="tab-btn active" data-tab-group="career" data-tab="jobOpeningsTab" role="tab" aria-selected="true">Job Openings</button>
+          <button class="tab-btn" data-tab-group="career" data-tab="openApplicationTab" role="tab" aria-selected="false">Open Application</button>
+        </div>
+
+        <div class="tab-panel active" id="jobOpeningsTab" role="tabpanel" data-tab-panel-group="career">
+          <div class="section-heading">
+            <div>
+              <h2>Current Openings</h2>
+              <p>Select a position to view the role summary and application action.</p>
+            </div>
+            <span class="count-pill" id="jobCount">1 opening</span>
+          </div>
+          <div class="accordion" id="jobAccordion"></div>
+        </div>
+
+        <div class="tab-panel" id="openApplicationTab" role="tabpanel" data-tab-panel-group="career">
+          <div class="section-heading">
+            <div>
+              <h2>Open Application</h2>
+              <p>Share your profile with Landscope even when you are not applying for a specific advertised position.</p>
+            </div>
+          </div>
+          <div class="career-card">
+            <div>
+              <h3>Submit a General Career Application</h3>
+              <p>Complete the same structured application journey and indicate your area or position of interest.</p>
+            </div>
+            <button class="btn btn-primary" id="openGeneralApplication">Apply Now</button>
+          </div>
+        </div>
+      </div>
+
+      <section class="notes">
+        <h3>Application guidance</h3>
+        <ol>
+          <li>Complete your personal information and provide accurate contact details.</li>
+          <li>Add your qualifications and employment history, then attach your cover letter and CV.</li>
+          <li>Review the declaration and confirm your electronic signature before submission.</li>
+        </ol>
+      </section>
+      <div class="prototype-banner">Prototype only — application data and documents remain in your browser session.</div>
+    </section>
+
+    <!-- CAREER APPLICATION VIEW -->
+    <section class="view" id="careerFormView">
+      <div class="breadcrumb-row"><button type="button" data-go-home>Home</button><span>›</span><button type="button" data-back-career>Career</button><span>›</span><span>Application</span></div>
+      <div class="form-page-header">
+        <div>
+          <div class="eyebrow">Career application</div>
+          <h2 id="careerFormTitle">Head of Marketing and Communications</h2>
+          <div class="ref" id="careerFormRef">Job Reference: LM-JOB-01</div>
+        </div>
+        <button class="btn btn-secondary" data-back-career>← Back to Career</button>
+      </div>
+
+      <div class="intro-banner" id="careerFormIntro">Complete the application sections below. You can move through the path using Next / Previous or select a section directly.</div>
+
+      <div class="career-form-shell">
+        <aside class="stepper-card" aria-label="Career application sections">
+          <div class="stepper-label">Application Path</div>
+          <div class="steps" id="careerSteps"></div>
+          <div class="progress-track"><div class="progress-fill" id="careerProgressFill"></div></div>
+        </aside>
+
+        <form class="form-card" id="careerApplicationForm">
+          <section class="step-panel active" data-career-step-panel="0">
+            <h3>Personal Information</h3>
+            <p class="help">Provide your personal and contact information.</p>
+            <div class="application-summary">
+              <div class="summary-cell"><span>Post Applied</span><strong id="careerSummaryPost">Head of Marketing and Communications</strong></div>
+              <div class="summary-cell"><span>Job Reference</span><strong id="careerSummaryRef">LM-JOB-01</strong></div>
+              <div class="summary-cell"><span>Job Description</span><strong><button type="button" class="btn btn-secondary btn-small" id="downloadJobDescription">Download</button></strong></div>
+            </div>
+            <div class="open-app-note" id="openApplicationNote" style="display:none">This is an open application. Add the role, discipline or business area you are interested in so your profile can be routed appropriately.</div>
+            <div class="field full" id="positionInterestField" style="display:none;margin-bottom:14px"><label><span class="required">*</span>Position / Area of Interest</label><input name="positionInterest" /></div>
+            <div class="grid-2">
+              <div class="field"><label><span class="required">*</span>First Name</label><input name="careerFirstName" required /></div>
+              <div class="field"><label><span class="required">*</span>Surname</label><input name="careerSurname" required /></div>
+              <div class="field"><label><span class="required">*</span>National Identity No.</label><input name="careerNic" required /></div>
+              <div class="field"><label><span class="required">*</span>E-mail Address</label><input type="email" name="careerEmail" required /></div>
+              <div class="field"><label>Home Phone No.</label><input name="careerHomePhone" /></div>
+              <div class="field"><label><span class="required">*</span>Mobile</label><input name="careerMobile" required /></div>
+              <div class="field full"><label><span class="required">*</span>Residential Address Street</label><input name="careerAddressStreet" required /></div>
+              <div class="field"><label><span class="required">*</span>Residential Address City</label><input name="careerAddressCity" required /></div>
+              <div class="field"><label>Residential Address State</label><input name="careerAddressState" /></div>
+              <div class="field"><label>Residential Address Postal Code</label><input name="careerAddressPostal" /></div>
+              <div class="field"><label><span class="required">*</span>Residential Address Country</label><input name="careerAddressCountry" required value="Mauritius" /></div>
+            </div>
+          </section>
+
+          <section class="step-panel" data-career-step-panel="1">
+            <h3>Qualifications</h3>
+            <p class="help">Attach a copy of the certificate for each qualification.</p>
+            <div class="inline-add-card">
+              <h4>Add Qualification</h4>
+              <div class="grid-3">
+                <div class="field"><label>Academic / Professional Qualification</label><input id="qualificationName" /></div>
+                <div class="field"><label>Year</label><input id="qualificationYear" type="number" min="1950" max="2100" /></div>
+                <div class="field"><label>Certificate</label><input id="qualificationCertificate" type="file" /></div>
+              </div>
+              <div class="btn-row" style="margin-top:12px"><button type="button" class="btn btn-ghost btn-small" id="addQualificationBtn">+ Add Qualification</button></div>
+            </div>
+            <div class="table-wrap">
+              <table><thead><tr><th>SN</th><th>Academic / Professional Qualification</th><th>Year</th><th>Certificate</th><th>Actions</th></tr></thead><tbody id="qualificationTableBody"><tr><td colspan="5" class="empty-row">No qualification added.</td></tr></tbody></table>
+            </div>
+          </section>
+
+          <section class="step-panel" data-career-step-panel="2">
+            <h3>Employment History</h3>
+            <p class="help">Add your relevant previous employment experience.</p>
+            <div class="inline-add-card">
+              <h4>Add Employment</h4>
+              <div class="grid-4">
+                <div class="field"><label>Company Name</label><input id="employmentCompany" /></div>
+                <div class="field"><label>Post Held</label><input id="employmentPost" /></div>
+                <div class="field"><label>From</label><input id="employmentFrom" type="month" /></div>
+                <div class="field"><label>To</label><input id="employmentTo" type="month" /></div>
+              </div>
+              <div class="btn-row" style="margin-top:12px"><button type="button" class="btn btn-ghost btn-small" id="addEmploymentBtn">+ Add Employment</button></div>
+            </div>
+            <div class="table-wrap">
+              <table><thead><tr><th>SN</th><th>Company Name</th><th>Post Held</th><th>From</th><th>To</th><th>Actions</th></tr></thead><tbody id="employmentTableBody"><tr><td colspan="6" class="empty-row">No employment history added.</td></tr></tbody></table>
+            </div>
+          </section>
+
+          <section class="step-panel" data-career-step-panel="3">
+            <h3>Supporting Documents</h3>
+            <p class="help">Upload the documents required to support your application.</p>
+            <div class="upload-grid">
+              <div class="upload-box" data-upload="Cover Letter"><div><div class="upload-icon">☁</div><div class="upload-title">Cover Letter *</div><div class="upload-hint">Drag & drop or click to browse</div><div class="file-name"></div></div><input type="file" name="careerCoverLetter" /></div>
+              <div class="upload-box" data-upload="Curriculum Vitae"><div><div class="upload-icon">☁</div><div class="upload-title">Curriculum Vitae (CV) *</div><div class="upload-hint">Drag & drop or click to browse</div><div class="file-name"></div></div><input type="file" name="careerCv" /></div>
+            </div>
+          </section>
+
+          <section class="step-panel" data-career-step-panel="4">
+            <h3>Declaration & Review</h3>
+            <p class="help">Review your application and confirm the declaration before submission.</p>
+            <div id="careerReviewGrid" class="review-grid"></div>
+            <div class="signature-box">
+              <p class="declaration-text"><strong>Declaration:</strong> I, the undersigned applicant, declare that the particulars in this application are true and accurate and that I have not wilfully suppressed any material fact.</p>
+              <div class="grid-2">
+                <div class="field"><label><span class="required">*</span>Full Name</label><input name="careerSignatureName" required /></div>
+                <div class="field"><label>Date</label><input id="careerDeclarationDate" readonly /></div>
+              </div>
+              <div class="check-row"><input type="checkbox" id="careerSignatureConfirm" required /><label for="careerSignatureConfirm">I confirm that the name entered above may be used as my electronic signature for this application.</label></div>
+            </div>
+          </section>
+
+          <div class="form-footer">
+            <span class="small-note">* Required fields</span>
+            <div class="right-actions">
+              <button type="button" class="btn btn-secondary" id="careerPrevStepBtn">Previous</button>
+              <button type="button" class="btn btn-primary" id="careerNextStepBtn">Next</button>
+              <button type="submit" class="btn btn-primary" id="careerSubmitBtn" style="display:none">Submit Application</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const tenders = [
+      {
+        id: 'conference-booking',
+        title: 'THE IMPLEMENTATION OF A FULLY INTEGRATED CONFERENCE HALL/MEETING ROOM BOOKING AND MANAGEMENT SYSTEM FOR CYBER PROPERTIES INVESTMENT LTD (CPIL)',
+        reference: 'LM-IT-JL26-01',
+        closing: 'Friday, January 01, 2027 at 15:00 hrs.',
+        description: 'Section text2',
+        updated: true,
+        updateMessage: 'This tender has been updated. Please review the latest information before registering.'
+      },
+      {
+        id: 'cleaning-services',
+        title: 'Cleaning Services',
+        reference: 'LM-RFP-S25',
+        closing: 'Thursday, December 31, 2026 at 15:00 hrs.',
+        description: 'We invite all suppliers, service providers, and contractors to register with us.',
+        updated: true,
+        updateMessage: 'Updated information is available for this procurement opportunity. Please review the tender details before submission.'
+      }
+    ];
+
+    const jobs = [
+      {
+        id: 'head-marketing-communications',
+        title: 'Head of Marketing and Communications',
+        reference: 'LM-JOB-01',
+        description: 'The Head of Marketing and Communications shall oversee and drive all aspects of Marketing and Communications strategic imperatives within Landscope Mauritius, in order to realise Landscopes’ goal of growth acceleration and effectively communicate, maintain and represent Landscopes’ brand image in the Mauritian and Indian Ocean market.'
+      }
+    ];
+
+    const supplierStepData = [
+      { title: 'Company Details', subtitle: 'Legal & contact information' },
+      { title: 'Company Profile', subtitle: 'People & contacts' },
+      { title: 'Other Details', subtitle: 'Business assessment' },
+      { title: 'Supplier Categories', subtitle: 'Areas of supply' },
+      { title: 'Documents', subtitle: 'Disclaimer & uploads' },
+      { title: 'Review & Submit', subtitle: 'Final verification' }
+    ];
+
+    const careerStepData = [
+      { title: 'Personal Information', subtitle: 'Identity & contact details' },
+      { title: 'Qualifications', subtitle: 'Academic & professional' },
+      { title: 'Employment History', subtitle: 'Previous experience' },
+      { title: 'Supporting Documents', subtitle: 'Cover letter & CV' },
+      { title: 'Declaration', subtitle: 'Review & signature' }
+    ];
+
+    const views = {
+      home: document.getElementById('portalHomeView'),
+      procurement: document.getElementById('procurementListingView'),
+      tender: document.getElementById('tenderFormView'),
+      supplier: document.getElementById('supplierFormView'),
+      career: document.getElementById('careerListingView'),
+      careerForm: document.getElementById('careerFormView')
+    };
+
+    function showView(name) {
+      Object.entries(views).forEach(([key, el]) => el.classList.toggle('active', key === name));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toast.classList.remove('show'), 3200);
+    }
+
+    document.getElementById('openProcurementPortal').addEventListener('click', () => showView('procurement'));
+    document.getElementById('openCareerPortal').addEventListener('click', () => showView('career'));
+    document.querySelectorAll('[data-go-home]').forEach(btn => btn.addEventListener('click', () => showView('home')));
+    document.getElementById('brandHome').addEventListener('click', () => showView('home'));
+    document.getElementById('topHomeBtn').addEventListener('click', () => showView('home'));
+
+    // Scope tabs by tab group so procurement and career do not affect each other.
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const group = btn.dataset.tabGroup || 'procurement';
+        document.querySelectorAll(`.tab-btn[data-tab-group="${group}"]`).forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
+        document.querySelectorAll(`[data-tab-panel-group="${group}"]`).forEach(p => p.classList.remove('active'));
+        // Legacy procurement tabs do not have group attributes.
+        if (group === 'procurement') {
+          document.querySelectorAll('.record-tabs .tab-btn:not([data-tab-group])').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
+          ['tenderTab','supplierTab'].forEach(id => document.getElementById(id)?.classList.remove('active'));
+        }
+        btn.classList.add('active');
+        btn.setAttribute('aria-selected', 'true');
+        document.getElementById(btn.dataset.tab)?.classList.add('active');
+      });
+    });
+
+    // PROCUREMENT: Tender accordion
+    const tenderAccordion = document.getElementById('tenderAccordion');
+    tenders.forEach((tender, index) => {
+      const item = document.createElement('article');
+      item.className = 'accordion-item' + (index === 1 ? ' open' : '');
+      item.innerHTML = `
+        <button class="accordion-trigger" type="button" aria-expanded="${index === 1}">
+          <div><div class="acc-title">${tender.title}</div></div>
+          ${tender.updated ? '<span class="badge updated">Updated</span>' : ''}
+          <span class="chevron">⌄</span>
+        </button>
+        <div class="accordion-body">
+          <div class="meta-grid">
+            <div class="meta-card"><div class="meta-label">Reference</div><div class="meta-value">${tender.reference}</div></div>
+            <div class="meta-card"><div class="meta-label">Closing date for submission</div><div class="meta-value">${tender.closing}</div></div>
+          </div>
+          <div class="description">${tender.description}</div>
+          ${tender.updated ? `<div class="update-note"><span>✓</span><span><strong>Updated procurement notice.</strong> ${tender.updateMessage}</span></div>` : ''}
+          <div class="btn-row"><button class="btn btn-primary register-tender" data-tender-id="${tender.id}">Register</button></div>
+        </div>`;
+      item.querySelector('.accordion-trigger').addEventListener('click', () => {
+        const open = item.classList.toggle('open');
+        item.querySelector('.accordion-trigger').setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+      tenderAccordion.appendChild(item);
+    });
+    document.getElementById('tenderCount').textContent = `${tenders.length} opportunities`;
+
+    document.addEventListener('click', (e) => {
+      const registerBtn = e.target.closest('.register-tender');
+      if (registerBtn) {
+        const tender = tenders.find(t => t.id === registerBtn.dataset.tenderId);
+        document.getElementById('tenderFormTitle').textContent = tender.title;
+        document.getElementById('tenderFormRef').textContent = `Reference: ${tender.reference}`;
+        document.getElementById('tenderFormIntro').textContent = tender.description;
+        showView('tender');
+      }
+    });
+
+    document.getElementById('openSupplierRegistration').addEventListener('click', () => {
+      setSupplierStep(0);
+      showView('supplier');
+    });
+    document.querySelectorAll('[data-back-procurement]').forEach(btn => btn.addEventListener('click', () => showView('procurement')));
+    document.getElementById('tenderRegistrationForm').addEventListener('submit', e => {
+      e.preventDefault();
+      if (!e.currentTarget.reportValidity()) return;
+      showToast('Tender registration captured in the prototype.');
+      setTimeout(() => showView('procurement'), 850);
+    });
+
+    // PROCUREMENT: Supplier stepper
+    const supplierStepsContainer = document.getElementById('supplierSteps');
+    supplierStepData.forEach((step, index) => {
+      const btn = document.createElement('button');
+      btn.type = 'button'; btn.className = 'step'; btn.dataset.step = index;
+      btn.innerHTML = `<span class="step-dot">${index + 1}</span><span class="step-text"><strong>${step.title}</strong><span>${step.subtitle}</span></span>`;
+      btn.addEventListener('click', () => setSupplierStep(index));
+      supplierStepsContainer.appendChild(btn);
+    });
+    let currentSupplierStep = 0;
+    const supplierStepButtons = [...supplierStepsContainer.querySelectorAll('.step')];
+    const supplierForm = document.getElementById('supplierRegistrationForm');
+    const supplierStepPanels = [...supplierForm.querySelectorAll('.step-panel')];
+    const prevStepBtn = document.getElementById('prevStepBtn');
+    const nextStepBtn = document.getElementById('nextStepBtn');
+    const supplierSubmitBtn = document.getElementById('supplierSubmitBtn');
+
+    function setSupplierStep(index) {
+      currentSupplierStep = Math.max(0, Math.min(index, supplierStepData.length - 1));
+      supplierStepButtons.forEach((btn, i) => {
+        btn.classList.toggle('active', i === currentSupplierStep);
+        btn.classList.toggle('done', i < currentSupplierStep);
+        btn.querySelector('.step-dot').textContent = i < currentSupplierStep ? '✓' : i + 1;
+      });
+      supplierStepPanels.forEach((panel, i) => panel.classList.toggle('active', i === currentSupplierStep));
+      prevStepBtn.style.visibility = currentSupplierStep === 0 ? 'hidden' : 'visible';
+      nextStepBtn.style.display = currentSupplierStep === supplierStepData.length - 1 ? 'none' : 'inline-flex';
+      supplierSubmitBtn.style.display = currentSupplierStep === supplierStepData.length - 1 ? 'inline-flex' : 'none';
+      document.getElementById('progressFill').style.width = `${((currentSupplierStep + 1) / supplierStepData.length) * 100}%`;
+      if (currentSupplierStep === supplierStepData.length - 1) buildSupplierReview();
+    }
+    prevStepBtn.addEventListener('click', () => setSupplierStep(currentSupplierStep - 1));
+    nextStepBtn.addEventListener('click', () => setSupplierStep(currentSupplierStep + 1));
+
+    let profiles = [];
+    document.getElementById('addProfileBtn').addEventListener('click', () => {
+      const name = document.getElementById('profileName').value.trim();
+      const title = document.getElementById('profileTitle').value.trim();
+      const email = document.getElementById('profileEmail').value.trim();
+      const type = document.getElementById('profileType').value;
+      if (!name || !email) { showToast('Enter at least a profile name and email.'); return; }
+      profiles.push({ name, title, email, type, primary: profiles.length === 0 });
+      renderProfiles();
+      ['profileName','profileTitle','profileEmail'].forEach(id => document.getElementById(id).value = '');
+    });
+    function renderProfiles() {
+      const body = document.getElementById('profileTableBody'); body.innerHTML = '';
+      if (!profiles.length) { body.innerHTML = '<tr><td colspan="6" class="empty-row">No company profile added.</td></tr>'; return; }
+      profiles.forEach((p, i) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${p.name}</td><td>${p.title || '—'}</td><td>${p.email}</td><td>${p.type}</td><td>${p.primary ? 'Yes' : 'No'}</td><td><button type="button" class="btn btn-secondary btn-small" data-remove-profile="${i}">Remove</button></td>`;
+        body.appendChild(tr);
+      });
+    }
+    document.getElementById('profileTableBody').addEventListener('click', e => {
+      const btn = e.target.closest('[data-remove-profile]'); if (!btn) return;
+      profiles.splice(Number(btn.dataset.removeProfile), 1); if (profiles.length) profiles[0].primary = true; renderProfiles();
+    });
+
+    document.querySelectorAll('#supplierRegistrationForm input[name="category"]').forEach(cb => cb.addEventListener('change', renderCategoryTags));
+    function renderCategoryTags() {
+      const selected = [...document.querySelectorAll('#supplierRegistrationForm input[name="category"]:checked')].map(cb => cb.value);
+      const host = document.getElementById('selectedCategoryTags');
+      host.innerHTML = selected.length ? selected.map(c => `<span class="tag">Category ${c}</span>`).join('') : '<span style="font-size:11px;color:var(--muted)">No category selected yet.</span>';
+    }
+
+    document.getElementById('downloadDeclaration').addEventListener('click', () => showToast('Prototype only: declaration form download would start here.'));
+    function supplierValueOf(name) {
+      const el = document.querySelector(`#supplierRegistrationForm [name="${name}"]`); return el?.value?.trim() || '—';
+    }
+    function buildSupplierReview() {
+      const categories = [...document.querySelectorAll('#supplierRegistrationForm input[name="category"]:checked')].map(cb => cb.value).join(', ') || 'None selected';
+      const uploaded = [...document.querySelectorAll('#supplierRegistrationForm .upload-box')].filter(b => b.querySelector('input').files.length).map(b => b.dataset.upload);
+      const blocks = [
+        { title: 'Company Details', items: [['Business', supplierValueOf('businessName')], ['Structure', supplierValueOf('businessStructure')], ['BRN', supplierValueOf('brn')], ['Company Email', supplierValueOf('companyEmail')], ['Country', supplierValueOf('addressCountry')]] },
+        { title: 'Company Profile', items: [['Profiles added', profiles.length], ['Primary contact', profiles[0]?.name || '—']] },
+        { title: 'Other Details', items: [['Turnover (MUR)', supplierValueOf('turnover')], ['Employees', supplierValueOf('employees')], ['Previous trading', supplierValueOf('previousTrading')], ['Credit facility', supplierValueOf('creditFacility')]] },
+        { title: 'Categories & Documents', items: [['Categories', categories], ['Documents uploaded', uploaded.length ? uploaded.join(', ') : 'None uploaded']] }
+      ];
+      document.getElementById('reviewGrid').innerHTML = blocks.map(block => `<div class="review-block"><h4>${block.title}</h4><div class="review-list">${block.items.map(item => `<div class="review-item"><span>${item[0]}</span><strong>${item[1]}</strong></div>`).join('')}</div></div>`).join('');
+    }
+    supplierForm.addEventListener('submit', e => { e.preventDefault(); showToast('Supplier registration submitted in the prototype.'); setTimeout(() => showView('procurement'), 900); });
+
+    // CAREER: Jobs accordion
+    const jobAccordion = document.getElementById('jobAccordion');
+    jobs.forEach((job, index) => {
+      const item = document.createElement('article');
+      item.className = 'accordion-item' + (index === 0 ? ' open' : '');
+      item.innerHTML = `
+        <button class="accordion-trigger" type="button" aria-expanded="${index === 0}">
+          <div><div class="acc-title">${job.title}</div></div>
+          <span class="job-badge">Open</span>
+          <span class="chevron">⌄</span>
+        </button>
+        <div class="accordion-body">
+          <div class="meta-grid"><div class="meta-card"><div class="meta-label">Job Reference</div><div class="meta-value">${job.reference}</div></div><div class="meta-card"><div class="meta-label">Application Type</div><div class="meta-value">Online Application</div></div></div>
+          <div class="description">${job.description}</div>
+          <div class="job-detail-note">The full job description would be available for download from the application page.</div>
+          <div class="btn-row"><button class="btn btn-primary apply-job" data-job-id="${job.id}">Apply</button></div>
+        </div>`;
+      item.querySelector('.accordion-trigger').addEventListener('click', () => {
+        const open = item.classList.toggle('open'); item.querySelector('.accordion-trigger').setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+      jobAccordion.appendChild(item);
+    });
+    document.getElementById('jobCount').textContent = `${jobs.length} ${jobs.length === 1 ? 'opening' : 'openings'}`;
+
+    let careerApplicationMode = 'job';
+    let activeJob = jobs[0];
+    document.addEventListener('click', e => {
+      const apply = e.target.closest('.apply-job');
+      if (!apply) return;
+      activeJob = jobs.find(j => j.id === apply.dataset.jobId);
+      openCareerApplication('job', activeJob);
+    });
+    document.getElementById('openGeneralApplication').addEventListener('click', () => openCareerApplication('open'));
+    document.querySelectorAll('[data-back-career]').forEach(btn => btn.addEventListener('click', () => showView('career')));
+
+    function openCareerApplication(mode, job = null) {
+      careerApplicationMode = mode;
+      const isOpen = mode === 'open';
+      const title = isOpen ? 'Open Application' : job.title;
+      const ref = isOpen ? 'GENERAL-APPLICATION' : job.reference;
+      document.getElementById('careerFormTitle').textContent = title;
+      document.getElementById('careerFormRef').textContent = isOpen ? 'General Career Application' : `Job Reference: ${ref}`;
+      document.getElementById('careerSummaryPost').textContent = title;
+      document.getElementById('careerSummaryRef').textContent = isOpen ? 'Not position-specific' : ref;
+      document.getElementById('downloadJobDescription').style.display = isOpen ? 'none' : 'inline-flex';
+      document.getElementById('openApplicationNote').style.display = isOpen ? 'block' : 'none';
+      document.getElementById('positionInterestField').style.display = isOpen ? 'block' : 'none';
+      document.querySelector('#positionInterestField input').required = isOpen;
+      document.getElementById('careerFormIntro').textContent = isOpen
+        ? 'Complete the guided open application and indicate your position or area of interest.'
+        : 'Complete the application sections below. You can move through the path using Next / Previous or select a section directly.';
+      setCareerStep(0);
+      showView('careerForm');
+    }
+
+    document.getElementById('downloadJobDescription').addEventListener('click', () => showToast('Prototype only: the full job description download would start here.'));
+
+    // CAREER: Stepper
+    const careerStepsContainer = document.getElementById('careerSteps');
+    careerStepData.forEach((step, index) => {
+      const btn = document.createElement('button');
+      btn.type = 'button'; btn.className = 'step'; btn.dataset.careerStep = index;
+      btn.innerHTML = `<span class="step-dot">${index + 1}</span><span class="step-text"><strong>${step.title}</strong><span>${step.subtitle}</span></span>`;
+      btn.addEventListener('click', () => setCareerStep(index)); careerStepsContainer.appendChild(btn);
+    });
+    let currentCareerStep = 0;
+    const careerStepButtons = [...careerStepsContainer.querySelectorAll('.step')];
+    const careerForm = document.getElementById('careerApplicationForm');
+    const careerStepPanels = [...careerForm.querySelectorAll('[data-career-step-panel]')];
+    const careerPrev = document.getElementById('careerPrevStepBtn');
+    const careerNext = document.getElementById('careerNextStepBtn');
+    const careerSubmit = document.getElementById('careerSubmitBtn');
+
+    function setCareerStep(index) {
+      currentCareerStep = Math.max(0, Math.min(index, careerStepData.length - 1));
+      careerStepButtons.forEach((btn, i) => {
+        btn.classList.toggle('active', i === currentCareerStep); btn.classList.toggle('done', i < currentCareerStep);
+        btn.querySelector('.step-dot').textContent = i < currentCareerStep ? '✓' : i + 1;
+      });
+      careerStepPanels.forEach((panel, i) => panel.classList.toggle('active', i === currentCareerStep));
+      careerPrev.style.visibility = currentCareerStep === 0 ? 'hidden' : 'visible';
+      careerNext.style.display = currentCareerStep === careerStepData.length - 1 ? 'none' : 'inline-flex';
+      careerSubmit.style.display = currentCareerStep === careerStepData.length - 1 ? 'inline-flex' : 'none';
+      document.getElementById('careerProgressFill').style.width = `${((currentCareerStep + 1) / careerStepData.length) * 100}%`;
+      if (currentCareerStep === careerStepData.length - 1) buildCareerReview();
+    }
+    careerPrev.addEventListener('click', () => setCareerStep(currentCareerStep - 1));
+    careerNext.addEventListener('click', () => setCareerStep(currentCareerStep + 1));
+
+    let qualifications = [];
+    document.getElementById('addQualificationBtn').addEventListener('click', () => {
+      const name = document.getElementById('qualificationName').value.trim();
+      const year = document.getElementById('qualificationYear').value.trim();
+      const fileInput = document.getElementById('qualificationCertificate');
+      const certificate = fileInput.files[0]?.name || 'Not attached';
+      if (!name) { showToast('Enter a qualification before adding it.'); return; }
+      qualifications.push({ name, year: year || '—', certificate });
+      document.getElementById('qualificationName').value = ''; document.getElementById('qualificationYear').value = ''; fileInput.value = '';
+      renderQualifications();
+    });
+    function renderQualifications() {
+      const body = document.getElementById('qualificationTableBody'); body.innerHTML = '';
+      if (!qualifications.length) { body.innerHTML = '<tr><td colspan="5" class="empty-row">No qualification added.</td></tr>'; return; }
+      qualifications.forEach((q,i) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${i+1}</td><td>${q.name}</td><td>${q.year}</td><td>${q.certificate}</td><td><button type="button" class="btn btn-secondary btn-small" data-remove-qualification="${i}">Remove</button></td>`; body.appendChild(tr);
+      });
+    }
+    document.getElementById('qualificationTableBody').addEventListener('click', e => {
+      const btn = e.target.closest('[data-remove-qualification]'); if (!btn) return;
+      qualifications.splice(Number(btn.dataset.removeQualification),1); renderQualifications();
+    });
+
+    let employment = [];
+    document.getElementById('addEmploymentBtn').addEventListener('click', () => {
+      const company = document.getElementById('employmentCompany').value.trim();
+      const post = document.getElementById('employmentPost').value.trim();
+      const from = document.getElementById('employmentFrom').value;
+      const to = document.getElementById('employmentTo').value;
+      if (!company || !post) { showToast('Enter company name and post held.'); return; }
+      employment.push({ company, post, from: from || '—', to: to || 'Present' });
+      ['employmentCompany','employmentPost','employmentFrom','employmentTo'].forEach(id => document.getElementById(id).value = ''); renderEmployment();
+    });
+    function renderEmployment() {
+      const body = document.getElementById('employmentTableBody'); body.innerHTML = '';
+      if (!employment.length) { body.innerHTML = '<tr><td colspan="6" class="empty-row">No employment history added.</td></tr>'; return; }
+      employment.forEach((r,i) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${i+1}</td><td>${r.company}</td><td>${r.post}</td><td>${r.from}</td><td>${r.to}</td><td><button type="button" class="btn btn-secondary btn-small" data-remove-employment="${i}">Remove</button></td>`; body.appendChild(tr);
+      });
+    }
+    document.getElementById('employmentTableBody').addEventListener('click', e => {
+      const btn = e.target.closest('[data-remove-employment]'); if (!btn) return;
+      employment.splice(Number(btn.dataset.removeEmployment),1); renderEmployment();
+    });
+
+    function careerValueOf(name) { const el = careerForm.querySelector(`[name="${name}"]`); return el?.value?.trim() || '—'; }
+    function buildCareerReview() {
+      const uploaded = [...careerForm.querySelectorAll('.upload-box')].filter(b => b.querySelector('input').files.length).map(b => b.dataset.upload);
+      const postApplied = careerApplicationMode === 'open' ? `Open Application — ${careerValueOf('positionInterest')}` : activeJob.title;
+      const blocks = [
+        { title: 'Application', items: [['Post / Interest', postApplied], ['Reference', careerApplicationMode === 'open' ? 'General application' : activeJob.reference]] },
+        { title: 'Personal Information', items: [['Applicant', `${careerValueOf('careerFirstName')} ${careerValueOf('careerSurname')}`], ['Email', careerValueOf('careerEmail')], ['Mobile', careerValueOf('careerMobile')], ['Country', careerValueOf('careerAddressCountry')]] },
+        { title: 'Profile', items: [['Qualifications added', qualifications.length], ['Employment records', employment.length], ['Supporting documents', uploaded.length ? uploaded.join(', ') : 'None uploaded']] }
+      ];
+      document.getElementById('careerReviewGrid').innerHTML = blocks.map(block => `<div class="review-block"><h4>${block.title}</h4><div class="review-list">${block.items.map(item => `<div class="review-item"><span>${item[0]}</span><strong>${item[1]}</strong></div>`).join('')}</div></div>`).join('');
+    }
+    careerForm.addEventListener('submit', e => {
+      e.preventDefault();
+      if (!careerForm.reportValidity()) { showToast('Please complete the required declaration fields.'); return; }
+      showToast('Career application submitted in the prototype.'); setTimeout(() => showView('career'), 950);
+    });
+
+    // File upload interactions for both portals.
+    document.querySelectorAll('.upload-box').forEach(box => {
+      const input = box.querySelector('input[type=file]'); const label = box.querySelector('.file-name');
+      input.addEventListener('change', () => label.textContent = input.files[0] ? `✓ ${input.files[0].name}` : '');
+      ['dragenter','dragover'].forEach(type => box.addEventListener(type, e => { e.preventDefault(); box.classList.add('drag'); }));
+      ['dragleave','drop'].forEach(type => box.addEventListener(type, e => { e.preventDefault(); box.classList.remove('drag'); }));
+    });
+
+    const d = new Date();
+    document.getElementById('careerDeclarationDate').value = d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
+    setSupplierStep(0);
+    setCareerStep(0);
+  </script>
+
+</body>
+</html>
